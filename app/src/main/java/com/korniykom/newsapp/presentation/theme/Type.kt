@@ -1,4 +1,4 @@
-package com.korniykom.newsapp.ui.theme
+package com.korniykom.newsapp.presentation.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
