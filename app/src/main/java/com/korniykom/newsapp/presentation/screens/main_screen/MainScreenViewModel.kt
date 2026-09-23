@@ -1,15 +1,14 @@
 package com.korniykom.newsapp.presentation.screens.main_screen
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import androidx.paging.map
 import com.korniykom.newsapp.domain.model.Article
 import com.korniykom.newsapp.domain.repository.NewsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
@@ -21,7 +20,7 @@ class MainScreenViewModel(
     private val repository: NewsRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(MainScreenState())
-    val state = _state
+    val state = _state.asStateFlow()
 
     val articles: Flow<PagingData<Article>> = _state
         .map { it.searchQuery }
@@ -32,12 +31,6 @@ class MainScreenViewModel(
                 flowOf(PagingData.empty())
             } else {
                 repository.searchArticles(query)
-            }
-        }
-        .map { pagingData ->
-            pagingData.map { article ->
-                Log.d("MainScreenViewModel", "article=\"${article.title}\" urlToImage=${article.urlToImage}")
-                article
             }
         }
         .cachedIn(viewModelScope)

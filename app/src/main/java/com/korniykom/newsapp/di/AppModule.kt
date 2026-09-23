@@ -3,6 +3,7 @@ import com.korniykom.newsapp.BuildConfig
 import com.korniykom.newsapp.data.local.NewsDatabase
 import com.korniykom.newsapp.data.repository.NewsRepositoryImpl
 import com.korniykom.newsapp.domain.repository.NewsRepository
+import com.korniykom.newsapp.presentation.screens.categories.CategoriesViewModel
 import com.korniykom.newsapp.presentation.screens.main_screen.MainScreenViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
@@ -32,6 +33,7 @@ val appModule = module {
         }
     }
     viewModelOf(::MainScreenViewModel)
+    viewModelOf(::CategoriesViewModel)
     single {
         Room.databaseBuilder(
             androidContext(),

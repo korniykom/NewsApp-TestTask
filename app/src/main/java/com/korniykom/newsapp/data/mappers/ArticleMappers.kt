@@ -1,7 +1,7 @@
 package com.korniykom.newsapp.data.mappers
 
-import com.korniykom.newsapp.data.remote.dto.ArticleDto
 import com.korniykom.newsapp.data.local.ArticleEntity
+import com.korniykom.newsapp.data.remote.dto.ArticleDto
 import com.korniykom.newsapp.domain.model.Article
 
 

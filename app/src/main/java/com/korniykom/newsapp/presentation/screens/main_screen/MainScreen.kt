@@ -1,16 +1,13 @@
 package com.korniykom.newsapp.presentation.screens.main_screen
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -30,13 +27,6 @@ fun MainScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val articles = viewModel.articles.collectAsLazyPagingItems()
 
-    LaunchedEffect(articles.loadState) {
-        Log.d(TAG, "loadState: ${articles.loadState}")
-    }
-
-    LaunchedEffect(articles.itemCount) {
-        Log.d(TAG, "itemCount: ${articles.itemCount}")
-    }
 
     Column(modifier = modifier.padding(16.dp)) {
         OutlinedTextField(
@@ -56,7 +46,6 @@ fun MainScreen(
                     NewsCard(
                         article = article
                     )
-//                    Text(article.title, modifier = Modifier.padding(vertical = 8.dp))
                 }
             }
         }
