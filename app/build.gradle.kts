@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ksp)
 }
 
 val localProperties = Properties().apply {
@@ -78,4 +79,12 @@ dependencies {
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.ktor.client.logging)
     implementation(libs.ktor.client.auth)
+
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    implementation(libs.room.paging)
+    ksp(libs.room.compiler)
+
+    implementation(libs.paging.runtime)
+    implementation(libs.paging.compose)
 }

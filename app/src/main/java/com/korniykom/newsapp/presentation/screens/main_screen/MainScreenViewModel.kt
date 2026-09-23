@@ -2,42 +2,39 @@ package com.korniykom.newsapp.presentation.screens.main_screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import com.korniykom.newsapp.domain.model.Article
+import com.korniykom.newsapp.domain.repository.NewsRepository
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
-class MainScreenViewModel : ViewModel() {
+class MainScreenViewModel(
+    private val repository: NewsRepository,
+) : ViewModel() {
     private var hasStartedSearchListener = false
     private val _state = MutableStateFlow(MainScreenState())
-    private val searchQueryState = _state
-        .map { it.searchQuery }
-        .debounce(400)
-        .distinctUntilChanged()
-        .onEach { query ->
-            if (query.isNotBlank()) {
-                search(query)
-            }
-        }
-    val state = _state
-        .onStart {
-            if (!hasStartedSearchListener) {
-                searchQueryState.launchIn(viewModelScope)
-                hasStartedSearchListener = true
-            }
 
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000L),
-            initialValue = MainScreenState()
-        )
+    val state = _state
+
+    val articles: Flow<PagingData<Article>> =
+        _state.map { it.searchQuery }
+            .debounce(400)
+            .distinctUntilChanged()
+            .flatMapLatest { query ->
+                if (query.isBlank()) {
+                    flowOf(PagingData.empty())
+                } else {
+                    repository.searchArticles(query)
+                }
+            }.cachedIn(viewModelScope)
+
 
     fun onAction(action: MainScreenAction) {
         when (action) {
@@ -45,11 +42,6 @@ class MainScreenViewModel : ViewModel() {
         }
     }
 
-    private fun search(query: String) {
-        _state.update { it.copy(isLoading = true) }
-
-        _state.update { it.copy(isLoading = false) }
-    }
 
     private fun onQueryChange(query: String) {
         _state.update { it.copy(searchQuery = query) }
