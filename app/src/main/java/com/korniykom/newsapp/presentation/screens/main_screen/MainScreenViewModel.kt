@@ -1,9 +1,11 @@
 package com.korniykom.newsapp.presentation.screens.main_screen
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.map
 import com.korniykom.newsapp.domain.model.Article
 import com.korniykom.newsapp.domain.repository.NewsRepository
 import kotlinx.coroutines.flow.Flow
@@ -18,22 +20,27 @@ import kotlinx.coroutines.flow.update
 class MainScreenViewModel(
     private val repository: NewsRepository,
 ) : ViewModel() {
-    private var hasStartedSearchListener = false
     private val _state = MutableStateFlow(MainScreenState())
-
     val state = _state
 
-    val articles: Flow<PagingData<Article>> =
-        _state.map { it.searchQuery }
-            .debounce(400)
-            .distinctUntilChanged()
-            .flatMapLatest { query ->
-                if (query.isBlank()) {
-                    flowOf(PagingData.empty())
-                } else {
-                    repository.searchArticles(query)
-                }
-            }.cachedIn(viewModelScope)
+    val articles: Flow<PagingData<Article>> = _state
+        .map { it.searchQuery }
+        .debounce(400)
+        .distinctUntilChanged()
+        .flatMapLatest { query ->
+            if (query.isBlank()) {
+                flowOf(PagingData.empty())
+            } else {
+                repository.searchArticles(query)
+            }
+        }
+        .map { pagingData ->
+            pagingData.map { article ->
+                Log.d("MainScreenViewModel", "article=\"${article.title}\" urlToImage=${article.urlToImage}")
+                article
+            }
+        }
+        .cachedIn(viewModelScope)
 
 
     fun onAction(action: MainScreenAction) {

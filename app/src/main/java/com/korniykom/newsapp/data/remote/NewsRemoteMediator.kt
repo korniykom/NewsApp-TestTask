@@ -41,11 +41,6 @@ class NewsRemoteMediator(
             }
         }
 
-        Log.d(
-            "NewsRemoteMediator",
-            "loadType=$loadType requesting page=$page lastItem.page=${state.lastItemOrNull()?.page}"
-        )
-
         return try {
             val response: NewsResponseDto = httpClient.get(BASE_URL) {
                 parameter("q", query)

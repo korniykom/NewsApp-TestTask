@@ -24,7 +24,7 @@ val appModule = module {
                 json(Json { ignoreUnknownKeys = true })
             }
             install(Logging) {
-                level = LogLevel.ALL
+                level = LogLevel.INFO
             }
             defaultRequest {
                 header("Authorization", "Bearer ${BuildConfig.unnknown_gibberish}")

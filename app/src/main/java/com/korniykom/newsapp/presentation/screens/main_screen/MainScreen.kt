@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
+import com.korniykom.newsapp.presentation.components.NewsCard
 import org.koin.androidx.compose.koinViewModel
 
 private const val TAG = "MainScreen"
@@ -52,7 +53,10 @@ fun MainScreen(
                 key = articles.itemKey { it.url }
             ) { index ->
                 articles[index]?.let { article ->
-                    Text(article.title, modifier = Modifier.padding(vertical = 8.dp))
+                    NewsCard(
+                        article = article
+                    )
+//                    Text(article.title, modifier = Modifier.padding(vertical = 8.dp))
                 }
             }
         }
